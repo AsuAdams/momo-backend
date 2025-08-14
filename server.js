@@ -7,15 +7,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Your MTN MoMo credentials
+// Serve static files (like index.html) from current folder
+app.use(express.static("."));
+
 const consumerKey = "o2AgW4YApUqSJAApAbbpt1Vs9mJ8TgT2";
 const consumerSecret = "e2smSWZnmWczukRi";
-const subscriptionKey = "8f4e90f3ccfa42faa4428e8e68057b9c";
-
-// MTN MoMo API settings
-const momoBaseUrl = "https://sandbox.momodeveloper.mtn.com"; // Change to live when ready
-const targetEnvironment = "sandbox"; // Change to "live" for production
-const payeeNumber = "0786422618"; // Your MoMo number to receive payment
+const subscriptionKey = "8f4e90f3ccfa42faa4428e8e68057b9c"; // replace with your real one
+const momoBaseUrl = "https://sandbox.momodeveloper.mtn.com"; 
+const targetEnvironment = "sandbox";
 
 async function getAccessToken() {
     const auth = Buffer.from(`${consumerKey}:${consumerSecret}`).toString("base64");
@@ -31,7 +30,7 @@ async function getAccessToken() {
 
 app.post("/pay", async (req, res) => {
     try {
-        const { amount, currency, phone } = req.body; // phone is the payer's number
+        const { amount, currency, phone } = req.body;
         const tokenData = await getAccessToken();
 
         if (!tokenData.access_token) {
@@ -54,7 +53,7 @@ app.post("/pay", async (req, res) => {
                 externalId: "123456",
                 payer: { partyIdType: "MSISDN", partyId: phone },
                 payerMessage: "Stock purchase",
-                payeeNote: `Payment to ${payeeNumber}`
+                payeeNote: "Thank you for your purchase"
             })
         });
 

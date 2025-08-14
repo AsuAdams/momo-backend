@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stock Purchase</title>
+</head>
+<body>
+    <h1>📈 Stock Purchase</h1>
+
+    <h2>Register</h2>
+    <input id="regUsername" placeholder="Username">
+    <input id="regPassword" placeholder="Password" type="password">
+    <input id="regPhone" placeholder="MTN Phone (e.g. 25678xxxxxxx)">
+    <button onclick="register()">Register</button>
+    <p id="regMsg"></p>
+
+    <h2>Login</h2>
+    <input id="loginUsername" placeholder="Username">
+    <input id="loginPassword" placeholder="Password" type="password">
+    <button onclick="login()">Login</button>
+    <p id="loginMsg"></p>
+
+    <h2>Buy Share</h2>
+    <input id="amount" placeholder="Amount in UGX">
+    <button onclick="buyShare()">Buy This Share</button>
+    <p id="buyMsg"></p>
+
+    <script>
+        let loggedInUser = null;
+
+        async function register() {
+            let res = await fetch("/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    username: document.getElementById("regUsername").value,
+                    password: document.getElementById("regPassword").value,
+                    phone: document.getElementById("regPhone").value
+                })
+            });
+            let data = await res.json();
+            document.getElementById("regMsg").innerText = data.message;
+        }
+
+        async function login() {
+            let res = await fetch("/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    username: document.getElementById("loginUsername").value,
+                    password: document.getElementById("loginPassword").value
+                })
+            });
+            let data = await res.json();
+            document.getElementById("loginMsg").innerText = data.message;
+            if (data.success) {
+                loggedInUser = document.getElementById("loginUsername").value;
+            }
+        }
+
+        async function buyShare() {
+            if (!loggedInUser) {
+                document.getElementById("buyMsg").innerText = "You must log in first.";
+                return;
+            }
+            let res = await fetch("/pay", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    username: loggedInUser,
+                    amount: document.getElementById("amount").value,
+                    currency: "UGX"
+                })
+            });
+            let data = await res.json();
+            document.getElementById("buyMsg").innerText = data.success 
+                ? "Payment request sent! Reference ID: " + data.referenceId
+                : "Payment failed: " + data.message;
+        }
+    </script>
+</body>
+</html>
+
