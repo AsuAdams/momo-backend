@@ -1,36 +1,37 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Sign Up</title>
+    <title>Signup - Stock App</title>
+    <meta charset="UTF-8">
 </head>
 <body>
-    <h1>Sign Up</h1>
+    <h2>Signup</h2>
     <form id="signupForm">
-        <input type="text" id="username" placeholder="Enter username" required>
-        <input type="text" id="phone" placeholder="Enter MTN phone number" required>
-        <button type="submit">Sign Up</button>
+        <label>Full Name:</label><br>
+        <input type="text" id="name" required><br><br>
+
+        <label>MTN Mobile Number:</label><br>
+        <input type="text" id="phone" placeholder="e.g. 0786422618" required><br><br>
+
+        <button type="submit">Register</button>
     </form>
-    <p id="message"></p>
 
     <script>
-        document.getElementById("signupForm").addEventListener("submit", async (e) => {
+        document.getElementById("signupForm").addEventListener("submit", function(e) {
             e.preventDefault();
-            const username = document.getElementById("username").value;
-            const phone = document.getElementById("phone").value;
+            const name = document.getElementById("name").value.trim();
+            const phone = document.getElementById("phone").value.trim();
 
-            const res = await fetch("/signup", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, phone })
-            });
-
-            const data = await res.json();
-            document.getElementById("message").innerText = data.message;
-
-            if (data.success) {
-                localStorage.setItem("username", username);
-                window.location.href = "stock.html";
+            if (!phone.startsWith("07")) {
+                alert("Please enter a valid MTN Uganda number starting with 07");
+                return;
             }
+
+            localStorage.setItem("userName", name);
+            localStorage.setItem("userPhone", phone);
+
+            alert("Registration successful!");
+            window.location.href = "stock.html";
         });
     </script>
 </body>

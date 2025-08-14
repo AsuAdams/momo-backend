@@ -1,19 +1,14 @@
 {
   "name": "momo-backend",
   "version": "1.0.0",
-  "description": "",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "bcrypt": "^6.0.0",
-    "cors": "^2.8.5",
-    "dotenv": "^17.2.1",
-    "express": "^4.21.2",
-    "jsonwebtoken": "^9.0.2",
-    "node-fetch": "^2.7.0",
-    "pg": "^8.16.3",
-    "uuid": "^9.0.1"
+    "express": "^4.18.2",
+    "axios": "^1.5.0",
+    "uuid": "^9.0.0",
+    "body-parser": "^1.20.2"
   }
 }

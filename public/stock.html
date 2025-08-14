@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Buy Shares</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <h2>Stock Purchase</h2>
+    <p>Welcome, <span id="username"></span></p>
+
+    <label>Amount (UGX):</label><br>
+    <input type="number" id="amount" min="500" value="1000"><br><br>
+
+    <button id="buyBtn">Buy This Share</button>
+
+    <script>
+        const username = localStorage.getItem("userName");
+        const phone = localStorage.getItem("userPhone");
+
+        if (!username || !phone) {
+            alert("Please signup first.");
+            window.location.href = "signup.html";
+        }
+
+        document.getElementById("username").textContent = username;
+
+        document.getElementById("buyBtn").addEventListener("click", async () => {
+            const amount = document.getElementById("amount").value;
+
+            const res = await fetch("/pay", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    amount: amount,
+                    currency: "UGX",
+                    phone: phone
+                })
+            });
+
+            const data = await res.json();
+
+            if (data.success) {
+                alert(`Payment request sent! Please check your phone to approve.\nRef: ${data.referenceId}`);
+            } else {
+                alert("Payment failed: " + data.message);
+            }
+        });
+    </script>
+</body>
+</html>
