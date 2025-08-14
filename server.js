@@ -8,10 +8,10 @@ const app = express();
 app.use(bodyParser.json());
 
 // MoMo API environment variables
-const PRIMARY_KEY = process.env.PRIMARY_KEY;
-const SECONDARY_KEY = process.env.SECONDARY_KEY;
-const CONSUMER_KEY = process.env.CONSUMER_KEY;
-const CONSUMER_SECRET = process.env.CONSUMER_SECRET;
+const PRIMARY_KEY = process.env.cd38979696f84a23ad1c08db9651efc2;
+const SECONDARY_KEY = process.env.9c4aebf52c6a4d04aa19b03a3f9a2c9c;
+const CONSUMER_KEY = process.env.o2AgW4YApUqSJAApAbbpt1Vs9mJ8TgT2;
+const CONSUMER_SECRET = process.env.e2smSWZnmWczukRi;
 
 const BASE_URL = 'https://sandbox.momodeveloper.mtn.com'; // Change to live when ready
 
