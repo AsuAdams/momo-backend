@@ -7,15 +7,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Your MTN MoMo API credentials
-const consumerKey = "o2AgW4YApUqSJAApAbbpt1Vs9mJ8TgT2";
-const consumerSecret = "e2smSWZnmWczukRi";
-const subscriptionKey = "8f4e90f3ccfa42faa4428e8e68057b9c";
+const consumerKey = process.env.CONSUMER_KEY;
+const consumerSecret = process.env.CONSUMER_SECRET;
+const subscriptionKey = process.env.SUBSCRIPTION_KEY;
+const payeeNumber = process.env.PAYEE_NUMBER;
 
-const momoBaseUrl = "https://sandbox.momodeveloper.mtn.com"; // Sandbox URL
+const momoBaseUrl = "https://sandbox.momodeveloper.mtn.com"; // Change to live URL when ready
 const targetEnvironment = "sandbox"; // Change to "live" for production
 
-// Function to get access token from MTN API
 async function getAccessToken() {
     const auth = Buffer.from(`${consumerKey}:${consumerSecret}`).toString("base64");
     const res = await fetch(`${momoBaseUrl}/collection/token/`, {
@@ -28,10 +27,9 @@ async function getAccessToken() {
     return res.json();
 }
 
-// Endpoint to handle payment requests
 app.post("/pay", async (req, res) => {
     try {
-        const { amount, currency, phone } = req.body;
+        const { amount, currency } = req.body;
         const tokenData = await getAccessToken();
 
         if (!tokenData.access_token) {
@@ -52,7 +50,7 @@ app.post("/pay", async (req, res) => {
                 amount: amount.toString(),
                 currency,
                 externalId: "123456",
-                payer: { partyIdType: "MSISDN", partyId: phone },
+                payer: { partyIdType: "MSISDN", partyId: payeeNumber },
                 payerMessage: "Stock purchase",
                 payeeNote: "Thank you for your purchase"
             })
@@ -69,5 +67,4 @@ app.post("/pay", async (req, res) => {
     }
 });
 
-const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
+app.listen(8080, () => console.log("✅ Server running on port 8080"));
