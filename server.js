@@ -2,19 +2,22 @@ const express = require("express");
 const fetch = require("node-fetch");
 const { v4: uuidv4 } = require("uuid");
 const cors = require("cors");
+const path = require("path");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, "public"))); // for HTML files
 
-// Serve static files (like index.html) from current folder
-app.use(express.static("."));
+// Store users in memory (username → phone)
+const users = {};
 
+// MTN MoMo API credentials
 const consumerKey = "o2AgW4YApUqSJAApAbbpt1Vs9mJ8TgT2";
 const consumerSecret = "e2smSWZnmWczukRi";
-const subscriptionKey = "8f4e90f3ccfa42faa4428e8e68057b9c"; // replace with your real one
-const momoBaseUrl = "https://sandbox.momodeveloper.mtn.com"; 
-const targetEnvironment = "sandbox";
+const subscriptionKey = "8f4e90f3ccfa42faa4428e8e68057b9c"; // Replace with your real subscription key
+const momoBaseUrl = "https://sandbox.momodeveloper.mtn.com";
+const targetEnvironment = "sandbox"; // change to "live" for production
 
 async function getAccessToken() {
     const auth = Buffer.from(`${consumerKey}:${consumerSecret}`).toString("base64");
@@ -28,11 +31,27 @@ async function getAccessToken() {
     return res.json();
 }
 
-app.post("/pay", async (req, res) => {
-    try {
-        const { amount, currency, phone } = req.body;
-        const tokenData = await getAccessToken();
+// Signup endpoint
+app.post("/signup", (req, res) => {
+    const { username, phone } = req.body;
+    if (!username || !phone) {
+        return res.json({ success: false, message: "Username and phone required" });
+    }
+    users[username] = phone;
+    res.json({ success: true, message: "User registered successfully" });
+});
 
+// Payment endpoint
+app.post("/buy", async (req, res) => {
+    try {
+        const { username, amount, currency } = req.body;
+        const phone = users[username];
+
+        if (!phone) {
+            return res.json({ success: false, message: "User not found. Please sign up first." });
+        }
+
+        const tokenData = await getAccessToken();
         if (!tokenData.access_token) {
             return res.json({ success: false, message: "Failed to get access token" });
         }
